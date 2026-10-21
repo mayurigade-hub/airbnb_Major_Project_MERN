@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 
 const mongoose = require('mongoose');
+const Listing = require('./models/listing');
 
 main().then(() => {
     console.log('Connected to MongoDB');
@@ -15,6 +16,18 @@ async function main() {
 
 app.get('/', (req, res) => {
     res.send('Hi, I am root');
+});
+
+app.get('/listings', async (req, res) => {
+    let sampleList = await new Listing ({
+        title: "Sample Listing",
+        description: "This is a sample listing",
+        price: 100,
+        location: "Sample Location",
+        country: "Sample Country"
+    });
+    await sampleList.save();
+    res.send('Sample listing created');
 });
 
 app.listen(8080, () => {
