@@ -8,12 +8,15 @@ const listingSchema = new Schema({
   },
   description: String,
   image: {
-    type: String,
-    default: "https://res.cloudinary.com/dxjv0gq4k/image/upload/v1686781234/placeholder-image.png",
-    set: (v) => 
+    filename: String,
+    url: {
+      type: String,
+      default: "https://res.cloudinary.com/dxjv0gq4k/image/upload/v1686781234/placeholder-image.png",
+      set: (v) => 
         v === ""
-            ? "https://res.cloudinary.com/dxjv0gq4k/image/upload/v1686781234/placeholder-image.png"
-            : v
+        ? "https://res.cloudinary.com/dxjv0gq4k/image/upload/v1686781234/placeholder-image.png"
+        : v
+    }
   }, 
   price: Number,
   location: String,
