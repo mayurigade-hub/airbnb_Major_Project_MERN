@@ -25,6 +25,13 @@ app.get('/listings', async (req, res) => {
     res.render('listings/index.ejs', { allListing });
 });
 
+//Show route
+app.get('/listings/:id', async (req, res) => {
+    const { id } = req.params;
+    const listing = await Listing.findById(id);
+    res.render('listings/show.ejs', { listing });
+});
+
 // app.get('/', (req, res) => {
 //     res.send('Hi, I am root');
 // });
