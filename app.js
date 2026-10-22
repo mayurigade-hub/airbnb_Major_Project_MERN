@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const ejs = require('ejs'); 
+const methodOverride = require('method-override');
 
 const mongoose = require('mongoose');
 const Listing = require('./models/listing');
@@ -9,6 +10,7 @@ const path = require('path');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 
 main().then(() => {
     console.log('Connected to MongoDB');
@@ -38,10 +40,25 @@ app.get('/listings/:id', async (req, res) => {
     res.render('listings/show.ejs', { listing });
 });
 
+//Create route
 app.post('/listings', async (req, res) => {
     const newListing = new Listing(req.body.listing);
     await newListing.save();
     res.redirect('/listings');
+});
+
+//Edit route
+app.get('/listings/:id/edit', async (req, res) => {
+    const { id } = req.params;
+    const listing = await Listing.findById(id);
+    res.render('listings/edit.ejs', { listing });
+});
+
+//update route
+app.put('/listings/:id', async (req, res) => {
+    const { id } = req.params;
+    const updatedListing = await Listing.findByIdAndUpdate(id, req.body.listing, { new: true });
+    res.redirect(`/listings/${updatedListing._id}`);
 });
 
 // app.get('/', (req, res) => {
