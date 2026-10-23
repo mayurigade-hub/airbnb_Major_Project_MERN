@@ -71,9 +71,9 @@ app.delete('/listings/:id', async (req, res) => {
     res.redirect('/listings');
 });
 
-// app.get('/', (req, res) => {
-//     res.send('Hi, I am root');
-// });
+app.get('/', (req, res) => {
+    res.send('Hi, I am root');
+});
 
 // app.get('/listings', async (req, res) => {
 //     let sampleList = await new Listing ({
