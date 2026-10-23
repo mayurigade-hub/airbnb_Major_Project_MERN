@@ -1,6 +1,6 @@
-/* body {
-    background-color: #f0f0f0;
-} */
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
 
 /* Navbar */
 .navbar {
@@ -49,4 +49,39 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: space-evenly;
+}
+
+/* Card */
+.card {
+    border: none !important;
+    margin-bottom: 2rem;
+}
+
+.card-img-top {
+    border-radius: 1rem !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
+.card-body {
+    padding: 0 !important;
+}
+
+.card-text p {
+    font-weight: 400 !important;
+}
+
+.listing-link{
+    text-decoration: none !important;
+}
+
+/* card-effect */
+.card-img-overlay {
+    opacity: 0;
+}
+
+
+.card-img-overlay:hover {
+    opacity: 0.2;
+    background-color: #ffffff;
 }
