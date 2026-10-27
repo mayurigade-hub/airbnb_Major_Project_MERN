@@ -11,14 +11,18 @@ const listingSchema = new Schema({
     filename: String,
     url: {
       type: String,
-      default: "https://res.cloudinary.com/dxjv0gq4k/image/upload/v1686781234/placeholder-image.png",
+      default: "https://tse4.mm.bing.net/th/id/OIP.tT7UG7QNOQKvijhtgqq2lAHaE8?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
       set: (v) => 
         v === ""
-        ? "https://res.cloudinary.com/dxjv0gq4k/image/upload/v1686781234/placeholder-image.png"
+        ? "https://tse4.mm.bing.net/th/id/OIP.tT7UG7QNOQKvijhtgqq2lAHaE8?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
         : v
     }
   }, 
-  price: Number,
+  price: {
+    type: Number,
+    required: true,
+    min: 0
+  },
   location: String,
   country: String,
 });
