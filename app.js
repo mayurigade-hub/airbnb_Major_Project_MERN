@@ -9,6 +9,7 @@ const Listing = require('./models/listing');
 const path = require('path');
 const wrapAsync = require('./utils/wrapAsync');
 const ExpressError = require('./utils/ExpressError');
+const { listingSchema } = require('./schema.js');
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -47,8 +48,10 @@ app.get('/listings/:id', wrapAsync(async (req, res) => {
 
 //Create route
 app.post('/listings', wrapAsync(async (req, res) => {
-    if(!req.body.listing) {
-        throw new ExpressError(400, 'Bad Request');
+    let result = listingSchema.validate(req.body);
+    console.log(result);
+    if (result.error) {
+        throw new ExpressError(400, result.error)
     }
     const newListing = new Listing(req.body.listing);
     await newListing.save();
