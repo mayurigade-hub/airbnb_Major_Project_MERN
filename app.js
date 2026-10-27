@@ -7,6 +7,7 @@ const ejsMate = require('ejs-mate');
 const mongoose = require('mongoose');
 const Listing = require('./models/listing');
 const path = require('path');
+const wrapAsync = require('./utils/wrapAsync');
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -44,15 +45,11 @@ app.get('/listings/:id', async (req, res) => {
 });
 
 //Create route
-app.post('/listings', async (req, res) => {
-    try{
+app.post('/listings', wrapAsync(async (req, res) => {
     const newListing = new Listing(req.body.listing);
     await newListing.save();
     res.redirect('/listings');
-    } catch (err) {
-        next(err);
-    }
-});
+}));
 
 //Edit route
 app.get('/listings/:id/edit', async (req, res) => {
