@@ -10,7 +10,7 @@ const Review = require('./models/review');
 const path = require('path');
 const wrapAsync = require('./utils/wrapAsync');
 const ExpressError = require('./utils/ExpressError');
-const { listingSchema } = require('./schema.js');
+const { listingSchema, reviewSchema } = require('./schema.js');
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -31,6 +31,16 @@ async function main() {
 
 const validateListing = (req, res, next) => {
     let { error } = listingSchema.validate(req.body);
+    if(error) {
+        let errMsg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(errMsg, 400);
+    } else {
+    next();
+    }
+}
+
+const validateReview = (req, res, next) => {
+    let { error } = reviewSchema.validate(req.body);
     if(error) {
         let errMsg = error.details.map(el => el.message).join(',');
         throw new ExpressError(errMsg, 400);
@@ -95,7 +105,7 @@ app.get('/', (req, res) => {
 
 //reviews
 //Post route for creating a new review
-app.post('/listings/:id/reviews', wrapAsync(async (req, res) => {
+app.post('/listings/:id/reviews', validateReview, wrapAsync(async (req, res) => {
    let listing = await Listing.findById(req.params.id);
    let newReview = new Review(req.body.review);
    
