@@ -63,7 +63,7 @@ app.get('/listings/new', (req, res) => {
 //Show route
 app.get('/listings/:id', wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const listing = await Listing.findById(id);
+    const listing = await Listing.findById(id).populate('reviews');
     res.render('listings/show.ejs', { listing });
 }));
 
@@ -129,7 +129,7 @@ app.post('/listings/:id/reviews', validateReview, wrapAsync(async (req, res) => 
 // });
 
 app.all('*splat', (req, res, next) => {
-    next(new ExpressError(404, 'Page Not Found'));
+    next(new ExpressError('Page Not Found', 404));
 });
 
 app.use((err, req, res, next) => {
