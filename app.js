@@ -6,6 +6,7 @@ const ejsMate = require('ejs-mate');
 
 const mongoose = require('mongoose');
 const Listing = require('./models/listing');
+const Review = require('./models/review');
 const path = require('path');
 const wrapAsync = require('./utils/wrapAsync');
 const ExpressError = require('./utils/ExpressError');
@@ -92,6 +93,19 @@ app.get('/', (req, res) => {
     res.send('Hi, I am root');
 });
 
+//reviews
+//Post route for creating a new review
+app.post('/listings/:id/reviews', wrapAsync(async (req, res) => {
+   let listing = await Listing.findById(req.params.id);
+   let newReview = new Review(req.body.review);
+   
+   listing.reviews.push(newReview);
+   
+   await newReview.save();
+   await listing.save();
+   res.redirect(`/listings/${listing._id}`);
+}));
+
 // app.get('/listings', async (req, res) => {
 //     let sampleList = await new Listing ({
 //         title: "Sample Listing",
@@ -104,7 +118,7 @@ app.get('/', (req, res) => {
 //     res.send('Sample listing created');
 // });
 
-app.all('*', (req, res, next) => {
+app.all('*splat', (req, res, next) => {
     next(new ExpressError(404, 'Page Not Found'));
 });
 
@@ -116,4 +130,3 @@ app.use((err, req, res, next) => {
 app.listen(8080, () => {
     console.log('Server is running on port 8080');
 })
-
