@@ -5,12 +5,9 @@ const methodOverride = require('method-override');
 const ejsMate = require('ejs-mate');
 
 const mongoose = require('mongoose');
-const Listing = require('./models/listing');
-const Review = require('./models/review');
 const path = require('path');
-const wrapAsync = require('./utils/wrapAsync');
 const ExpressError = require('./utils/ExpressError');
-const { listingSchema, reviewSchema } = require('./schema.js');
+
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -29,61 +26,11 @@ async function main() {
   await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
 }
 
-const validateListing = (req, res, next) => {
-    let { error } = listingSchema.validate(req.body);
-    if(error) {
-        let errMsg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(errMsg, 400);
-    } else {
-    next();
-    }
-}
-
-const validateReview = (req, res, next) => {
-    let { error } = reviewSchema.validate(req.body);
-    if(error) {
-        let errMsg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(errMsg, 400);
-    } else {
-    next();
-    }
-}
-
 const listings = require('./Routes/listing.js');
+const reviews = require('./Routes/review.js');
+
 app.use('/listings', listings);
-
-//reviews
-//Post route for creating a new review
-app.post('/listings/:id/reviews', validateReview, wrapAsync(async (req, res) => {
-   let listing = await Listing.findById(req.params.id);
-   let newReview = new Review(req.body.review);
-   
-   listing.reviews.push(newReview);
-   
-   await newReview.save();
-   await listing.save();
-   res.redirect(`/listings/${listing._id}`);
-}));
-
-//Delete Review route 
-app.delete('/listings/:id/reviews/:reviewId', wrapAsync(async (req, res) => {
-    const { id, reviewId } = req.params;
-    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/listings/${id}`);
-}));
-
-// app.get('/listings', async (req, res) => {
-//     let sampleList = await new Listing ({
-//         title: "Sample Listing",
-//         description: "This is a sample listing",
-//         price: 100,
-//         location: "Sample Location",
-//         country: "Sample Country"
-//     });
-//     await sampleList.save();
-//     res.send('Sample listing created');
-// });
+app.use('/listings/:id/reviews', reviews);
 
 app.all('*splat', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404));
