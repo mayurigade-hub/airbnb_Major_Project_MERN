@@ -22,6 +22,24 @@ app.get('/getcookies', (req, res) => {
     res.send('Cookie has been set!');
 })
 
+//Signed cookies
+//Signed cookies are a way to ensure the integrity of the cookie data. When a cookie is signed, it includes a signature that can be verified by the server to ensure that the cookie has not been tampered with.
+//To use signed cookies, you need to provide a secret key when initializing the cookie-parser middleware. This secret key is used to sign the cookies and verify their integrity.
+app.use(cookieParser('mysecretkey'));
+
+app.get('/setsignedcookies', (req, res) => {
+    res.cookie('signedGreeting', 'Hello, Signed World!', { signed: true });
+    res.send('Signed cookie has been set!');
+});
+
+
+//Verify cookies
+//to verify signed cookies, you can access the signed cookies using req.signedCookies instead of req.cookies. The cookie-parser middleware will automatically verify the signature of the signed cookies and provide you with the original value if the signature is valid.
+app.get('/verifysignedcookies', (req, res) => {
+    console.log(req.signedCookies);
+    res.send("verified signed cookies");
+});
+
 const users = require('./Routes/user.js');
 const posts = require('./Routes/post.js');
 
